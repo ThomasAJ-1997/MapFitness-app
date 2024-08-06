@@ -27,10 +27,24 @@ if (navigator.geolocation)
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      L.marker(coords)
-        .addTo(map)
-        .bindPopup("A pretty CSS popup.<br> Easily customizable.")
-        .openPopup();
+      map.on("click", function (mapEvent) {
+        console.log(mapEvent);
+        const { lat, lng } = mapEvent.latlng;
+
+        L.marker([lat, lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 250,
+              minWidth: 100,
+              autoClose: false,
+              closeOnClick: false,
+              className: "running-popup",
+            })
+          )
+          .setPopupContent("Workout pin")
+          .openPopup();
+      });
     },
     function () {
       alert("Could npt get your current position");
@@ -38,3 +52,5 @@ if (navigator.geolocation)
   );
 
 // console.log(test);
+///////////////////////////////////////////////////////////////////////////////////
+// Map Marker
