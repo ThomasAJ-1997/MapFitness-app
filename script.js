@@ -12,8 +12,52 @@ const inputCadence = document.querySelector(".form__input--cadence");
 const inputElevation = document.querySelector(".form__input--elevation");
 
 ////////////////////////////////////////////////////////////////////////
+// APP CLASSES
 ////////////////////////////////////////////////////////////////////////
 
+class Workout {
+  date = new Date();
+  id = (Date.now() + "").slice(-10); // Often we use libaries to create IDs.
+
+  constructor(coords, distance, duration) {
+    this.coords = coords; // [lat, lng]
+    this.distance = distance; // km
+    this.duration = duration; // mins
+  }
+}
+
+class Running extends Workout {
+  constructor(coords, distance, duration, cadence) {
+    super(coords, distance, duration);
+    this.cadence = cadence;
+    this.calcPace();
+  }
+  calcPace() {
+    // Min / km
+    this.pace = this.duration / this.distance;
+    return this.pace;
+  }
+}
+
+class Cycling extends Workout {
+  constructor(coords, distance, duration, elevationGain) {
+    super(coords, distance, duration);
+    this.elevationGain = elevationGain;
+    this.calcSpeed();
+  }
+
+  calcSpeed() {
+    // km/h
+    this.speed = this.distance / (this.duration / 60);
+  }
+}
+// TEST
+const run1 = new Running([39, -12], 5.2, 24, 178);
+const cycling1 = new Cycling([39, -12], 27, 95, 523);
+console.log(run1, cycling1);
+
+/////////////////////////////////////////////////////////////
+// APPLICATION ARCHITECTURE
 class App {
   #map;
   #mapEvent;
@@ -21,7 +65,7 @@ class App {
   constructor() {
     this._getPosition();
     form.addEventListener("submit", this._newWorkout.bind(this));
-    inputType.addEventListener("change", function () {});
+    inputType.addEventListener("change", this._toggleElevationField);
   }
 
   _getPosition() {
